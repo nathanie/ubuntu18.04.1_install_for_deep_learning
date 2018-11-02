@@ -53,5 +53,21 @@ sudo apt-get install docker-ce
 run hello-world docker to make sure you have all figured out correctly:
 sudo docker run hello-world
 
+to be able to run docker as a non-root user -> add a docker group for the active user:
+sudo usermod -aG docker <your-user>
+
+add nvidia-docker key:
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
+  sudo apt-key add -
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+  sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+sudo apt-get update
+
+now install nvidia-docker2:
+sudo apt-get install nvidia-docker2
+sudo pkill -SIGHUP dockerd
+
+docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 
 
