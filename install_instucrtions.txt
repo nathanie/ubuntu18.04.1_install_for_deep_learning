@@ -18,6 +18,47 @@ sudo reboot
 
 nvidia-smi
 
+download cuda 10.0 driver from:
+https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1804&target_type=deblocal
+
+and install it using:
+
+sudo dpkg -i cuda-repo-ubuntu1804-10-0-local-10.0.130-410.48_1.0-1_amd64.deb
+sudo apt-key add /var/cuda-repo-10-0-local/7fa2af80.pub ## this should be printed in command line after the previous command
+sudo apt-get update
+sudo apt-get install cuda
+
+download cudnn from
+https://developer.nvidia.com/rdp/cudnn-download
+and then install the files
+sudo dpkg -i libcudnn7_7.3.1.20-1+cuda10.0_amd64.deb
+sudo dpkg -i libcudnn7-dev_7.3.1.20-1+cuda10.0_amd64.deb
+sudo dpkg -i libcudnn7-doc_7.3.1.20-1+cuda10.0_amd64.deb
+
+go to /usr/include/cudnn.h and change the line #include "driver_types.h" to #include <driver_types.h> (should be line 63)
+
+now verify the cudnn installation:
+cp -r /usr/src/cudnn_samples_v7/ $HOME
+cd  $HOME/cudnn_samples_v7/mnistCUDNN
+make clean && make
+./mnistCUDNN
+
+if you get "Test passed!" your installation is correct
+
+now use: 
+gedit ~/.bashrc
+
+and add the following to the end off the file:
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64"
+export CUDA_HOME=/usr/local/cuda
+
+reload the .bashrc file using:
+source ~/.bashrc
+sudo ldconfig
+
+and verify your cuda-home is correctly defined
+echo $CUDA_HOME
+
 sudo apt-get update
 
 sudo apt-get install \
@@ -68,6 +109,10 @@ now install nvidia-docker2:
 sudo apt-get install nvidia-docker2
 sudo pkill -SIGHUP dockerd
 
+check that nvidia-docker runs well:
 docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 
 
+docker run --runtime=nvidia --rm -it -p 8888:8888 -p 6006:6006 -v /home/nati:/mnt gcr.io/kaggle-images/python
+
+jupyter notebook --allow-root --ip=0.0.0.0
