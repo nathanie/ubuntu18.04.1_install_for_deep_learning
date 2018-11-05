@@ -5,12 +5,22 @@ sudo apt-get install nvidia-410
 sudo ubuntu-drivers autoinstall
 nvidia-smi
 
+get the run-local file for ubuntu from: https://developer.nvidia.com/cuda-91-download-archive
 sudo chmod +x cuda_9.1.85_387.26_linux.run
 ./cuda_9.1.85_387.26_linux.run --override         #you may consider using sudo with this one
 
+use the "Download cuDNN v7.0.5 (Dec 11, 2017), for CUDA 9.1" link and download the "cuDNN v7.0.5 Library for Linux" version
 tar -zxvf cudnn-9.1-linux-x64-v7.tgz
 sudo cp -P cuda/lib64/libcudnn* /usr/local/cuda-9.1/lib64/
 sudo cp  cuda/include/cudnn.h /usr/local/cuda-9.1/include/
 sudo chmod a+r /usr/local/cuda-9.1/include/cudnn.h /usr/local/cuda/lib64/libcudnn*
 sudo apt-get install libcupti-dev
 
+add the following to the end of your ~/.bashrc file:
+export PATH=/usr/local/cuda-9.1/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+sudo reboot 
+
+verify your installation by running:
+nvcc --version
